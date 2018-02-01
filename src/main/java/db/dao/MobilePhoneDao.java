@@ -6,43 +6,75 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.function.Function;
+
 @Repository
 public class MobilePhoneDao {
 
     @Autowired
     private SessionFactory factory;
 
+    /**
+     * Получение {@link MobilePhone} по его id
+     *
+     * @return MobilePhone
+     */
     public MobilePhone getPhoneById(long id) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        MobilePhone phone = (MobilePhone) session.get(MobilePhone.class, id);
-        session.getTransaction().commit();
-        session.close();
-        return phone;
+        return getFromDB(session ->
+                session.get(MobilePhone.class, id));
     }
 
+    /**
+     * Добавление в базу данных {@link MobilePhone}
+     */
     public void addPhone(MobilePhone phone) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        session.save(phone);
-        session.getTransaction().commit();
-        session.close();
+        getFromDB(session -> {
+            session.save(phone);
+            return true;
+        });
     }
 
+    /**
+     * Обновление в базе данных {@link MobilePhone}
+     */
     public void updatePhone(MobilePhone phone) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        session.update(phone);
-        session.getTransaction().commit();
-        session.close();
+        getFromDB(session -> {
+            session.update(phone);
+            return true;
+        });
     }
 
-    public void deletePhoneById(long id) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        MobilePhone phone = (MobilePhone) session.get(MobilePhone.class, id);
-        session.delete(phone);
-        session.getTransaction().commit();
-        session.close();
+    /**
+     * Удаление из базы данных {@link MobilePhone} по его id.
+     *
+     * @return true если телефон с указанным id был в базе данных
+     * и успешно удален.
+     * <p>
+     * false если телефона в базе данных не было
+     */
+    public boolean deletePhoneById(long id) {
+        return getFromDB(session -> {
+            MobilePhone m = session.get(MobilePhone.class, id);
+            if (m != null) {
+                session.delete(m);
+                return true;
+            }
+            return false;
+        });
+
+    }
+
+    /**
+     * вспомогательный метод для работы с {@link Session}
+     * используя {@link Function}
+     */
+    private <T> T getFromDB(Function<Session, T> function) {
+        T result;
+        try (Session session = factory.openSession()) {
+            session.beginTransaction();
+            result = function.apply(session);
+            session.getTransaction().commit();
+        }
+        return result;
     }
 }
