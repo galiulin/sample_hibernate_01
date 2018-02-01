@@ -8,9 +8,20 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Hello</title>
+    <title>Data</title>
 </head>
 <body>
-Hello
+<h1>data page</h1>
+<br/>
+<a>${phone.model}</a>
+<br/>
+<a>${phone.cost}</a>
+<br/>
+<a>${phone.recense}</a>
+
+<br/>
+
+<a href="./">Назад</a>
+
 </body>
 </html>
