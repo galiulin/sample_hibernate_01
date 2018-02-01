@@ -20,4 +20,29 @@ public class MobilePhoneDao {
         session.close();
         return phone;
     }
+
+    public void addPhone(MobilePhone phone) {
+        Session session = factory.openSession();
+        session.beginTransaction();
+        session.save(phone);
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    public void updatePhone(MobilePhone phone) {
+        Session session = factory.openSession();
+        session.beginTransaction();
+        session.update(phone);
+        session.getTransaction().commit();
+        session.close();
+    }
+
+    public void deletePhoneById(long id) {
+        Session session = factory.openSession();
+        session.beginTransaction();
+        MobilePhone phone = (MobilePhone) session.get(MobilePhone.class, id);
+        session.delete(phone);
+        session.getTransaction().commit();
+        session.close();
+    }
 }

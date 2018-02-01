@@ -19,6 +19,6 @@
 <br/>
 <a href="./updatePhone">Update</a>
 <br/>
-<a href="./deletePhone">Update</a>
+<a href="./deletePhone">Delete</a>
 </body>
 </html>

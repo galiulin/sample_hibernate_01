@@ -25,6 +25,13 @@ public class MobilePhone {
         this.recense = recense;
     }
 
+    public MobilePhone(long id, String model, String cost, String recense) {
+        this.id = id;
+        this.model = model;
+        this.cost = cost;
+        this.recense = recense;
+    }
+
     @Id
     @Column(name = "mobile_id")
     public Long getId() {
