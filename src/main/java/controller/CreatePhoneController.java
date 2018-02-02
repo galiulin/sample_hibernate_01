@@ -17,7 +17,7 @@ public class CreatePhoneController {
     @RequestMapping(value = "/createPhone", method = RequestMethod.GET)
     public ModelAndView createPhone(){
         ModelAndView modelAndView = new ModelAndView("data");
-        MobilePhone mobilePhone = new MobilePhone(2, "Siemens c35", "someText", "not bad");
+        MobilePhone mobilePhone = new MobilePhone("Siemens c35", 3242, "not bad");
         mobilePhoneDao.addPhone(mobilePhone);
         modelAndView.addObject("phone", mobilePhoneDao.getPhoneById(2));
         return modelAndView;

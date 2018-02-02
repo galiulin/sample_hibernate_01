@@ -1,17 +1,14 @@
 package db.entities;
 
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "mobile")
 public class MobilePhone {
     private Long id;
     private String model;
-    private String cost;
+    private long cost;
     private String developer;
     private String recense;
 
@@ -19,13 +16,13 @@ public class MobilePhone {
 
     }
 
-    public MobilePhone(String model, String cost, String recense) {
+    public MobilePhone(String model, long cost, String recense) {
         this.model = model;
         this.cost = cost;
         this.recense = recense;
     }
 
-    public MobilePhone(long id, String model, String cost, String recense) {
+    public MobilePhone(long id, String model, long cost, String recense) {
         this.id = id;
         this.model = model;
         this.cost = cost;
@@ -33,6 +30,8 @@ public class MobilePhone {
     }
 
     @Id
+    @SequenceGenerator(name = "hibernateSeq", sequenceName = "HIBERNATE_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernateSeq")
     @Column(name = "mobile_id")
     public Long getId() {
         return id;
@@ -50,11 +49,11 @@ public class MobilePhone {
         this.model = model;
     }
 
-    public String getCost() {
+    public long getCost() {
         return cost;
     }
 
-    public void setCost(String cost) {
+    public void setCost(long cost) {
         this.cost = cost;
     }
 
