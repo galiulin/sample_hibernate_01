@@ -37,9 +37,24 @@ public class CreatePhoneController {
         siemensC65.setManufacturer(manufacturer);
 
         siemensC65.addDeal(deal);
+
+        MobilePhone iphone = new MobilePhone("iphone 3G", 4900, "good", new Certificate());
+        iphone.getCertificate().setPhone(iphone);
+        iphone.getCertificate().setCertNumber("1234Iphone");
+
+        Manufacturer ipho = new Manufacturer();
+        ipho.setCountry("America");
+        iphone.setManufacturer(ipho);
+
+        deal.addMobilePhone(iphone);
+
+
+
+
         deal.addMobilePhone(siemensC65);
 
 
+        mobilePhoneDao.addPhone(iphone);
         mobilePhoneDao.addPhone(siemensC65);
         dealDao.saveDeal(deal);
         modelAndView.addObject("phone", mobilePhoneDao.getPhoneById(2));
