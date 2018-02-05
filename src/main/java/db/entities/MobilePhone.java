@@ -2,6 +2,8 @@ package db.entities;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "mobile")
@@ -13,6 +15,7 @@ public class MobilePhone {
     private String recense;
     private Certificate certificate;
     private Manufacturer manufacturer;
+    private List<Deal> deals = new ArrayList<>();
 
     public MobilePhone() {
 
@@ -100,5 +103,18 @@ public class MobilePhone {
     @ManyToOne(optional = false, cascade = CascadeType.ALL)
     public Manufacturer getManufacturer() {
         return manufacturer;
+    }
+
+    @ManyToMany(mappedBy = "mobilePhones")
+    public List<Deal> getDeals() {
+        return deals;
+    }
+
+    public void setDeals(List<Deal> deals) {
+        this.deals = deals;
+    }
+
+    public void addDeal(Deal deal) {
+        deals.add(deal);
     }
 }
