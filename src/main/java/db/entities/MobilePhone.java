@@ -6,20 +6,23 @@ import javax.persistence.*;
 @Entity
 @Table(name = "mobile")
 public class MobilePhone {
-    private Long id;
+    private long id;
     private String model;
     private long cost;
     private String developer;
     private String recense;
+    private Certificate certificate;
+    private Manufacturer manufacturer;
 
     public MobilePhone() {
 
     }
 
-    public MobilePhone(String model, long cost, String recense) {
+    public MobilePhone(String model, long cost, String recense, Certificate certificate) {
         this.model = model;
         this.cost = cost;
         this.recense = recense;
+        this.certificate = certificate;
     }
 
     public MobilePhone(long id, String model, long cost, String recense) {
@@ -30,14 +33,13 @@ public class MobilePhone {
     }
 
     @Id
-    @SequenceGenerator(name = "hibernateSeq", sequenceName = "HIBERNATE_SEQUENCE")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernateSeq")
-    @Column(name = "mobile_id")
-    public Long getId() {
+    @SequenceGenerator(name = "hibernateSeq_phone", sequenceName = "PHONE_SEQUENCE")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hibernateSeq_phone")
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -73,6 +75,15 @@ public class MobilePhone {
         this.recense = recense;
     }
 
+    @OneToOne (optional = false, cascade = CascadeType.ALL)
+    public Certificate getCertificate() {
+        return certificate;
+    }
+
+    public void setCertificate(Certificate certificate) {
+        this.certificate = certificate;
+    }
+
     @Override
     public String toString() {
         return "MobilePhone{" +
@@ -80,5 +91,14 @@ public class MobilePhone {
                 ", cost=" + cost +
                 ", recense='" + recense + '\'' +
                 '}';
+    }
+
+    public void setManufacturer(Manufacturer manufacturer) {
+        this.manufacturer = manufacturer;
+    }
+
+    @ManyToOne(optional = false, cascade = CascadeType.ALL)
+    public Manufacturer getManufacturer() {
+        return manufacturer;
     }
 }

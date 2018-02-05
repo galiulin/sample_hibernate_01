@@ -5,7 +5,7 @@
 
     <bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.postgresql.Driver"/>
-        <property name="url" value="jdbc:postgresql://localhost:5432/taskdairy"/>
+        <property name="url" value="jdbc:postgresql://localhost:5432/testdb"/>
         <property name="username" value="admin"/>
         <property name="password" value="admin"/>
     </bean>
