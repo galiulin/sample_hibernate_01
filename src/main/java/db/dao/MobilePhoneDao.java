@@ -1,8 +1,10 @@
 package db.dao;
 
 import db.entities.MobilePhone;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -40,10 +42,17 @@ public class MobilePhoneDao {
 
     public MobilePhone getPhoneByIdHql(long id) {
         return getFromDB(session -> {
-            System.out.println("getPhoneByIdHql");
-            Query query = session.createQuery("from MobilePhone where id=:id");
+            Query query = session.createQuery("FROM MobilePhone where id=:id");
             query.setParameter("id", id);
-           return (MobilePhone) query.getResultList().get(0);
+            return (MobilePhone) query.getResultList().get(0);
+        });
+    }
+
+    public MobilePhone getPhoneByIdCriteria(long id) {
+        return getFromDB(session -> {
+            Criteria criteria = session.createCriteria((MobilePhone.class));
+            criteria.add(Restrictions.eq("id", id));
+            return (MobilePhone) criteria.list().get(0);
         });
     }
 
