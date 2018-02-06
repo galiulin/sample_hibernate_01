@@ -7,6 +7,7 @@ import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Query;
 import java.util.function.Function;
 
 @Repository
@@ -35,6 +36,15 @@ public class MobilePhoneDao {
         MobilePhone phone = (MobilePhone) query.list().get(0);
         session.close();
         return phone;
+    }
+
+    public MobilePhone getPhoneByIdHql(long id) {
+        return getFromDB(session -> {
+            System.out.println("getPhoneByIdHql");
+            Query query = session.createQuery("from MobilePhone where id=:id");
+            query.setParameter("id", id);
+           return (MobilePhone) query.getResultList().get(0);
+        });
     }
 
     /**
