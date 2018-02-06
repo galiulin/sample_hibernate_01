@@ -16,7 +16,7 @@ public class GetPhoneController {
     @RequestMapping(value = "/getPhone", method = RequestMethod.GET)
     public ModelAndView getPhone(){
         ModelAndView modelAndView = new ModelAndView("data");
-        MobilePhone phone = mobilePhoneDao.getPhoneById(1);
+        MobilePhone phone = mobilePhoneDao.getPhoneByIdNative(154);
         System.out.println(phone);
         modelAndView.addObject("phone", phone);
         return modelAndView;

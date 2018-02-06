@@ -3,6 +3,7 @@ package db.dao;
 import db.entities.MobilePhone;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -22,6 +23,18 @@ public class MobilePhoneDao {
     public MobilePhone getPhoneById(long id) {
         return getFromDB(session ->
                 session.get(MobilePhone.class, id));
+    }
+
+    public MobilePhone getPhoneByIdNative(long id) {
+        Session session = factory.openSession();
+        session.beginTransaction();
+        NativeQuery query = session.createNativeQuery(
+                "SELECT * FROM mobile WHERE mobile.id=" +
+                        id);
+        query.addEntity(MobilePhone.class);
+        MobilePhone phone = (MobilePhone) query.list().get(0);
+        session.close();
+        return phone;
     }
 
     /**
