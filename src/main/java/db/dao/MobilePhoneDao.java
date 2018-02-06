@@ -28,6 +28,9 @@ public class MobilePhoneDao {
                 session.get(MobilePhone.class, id));
     }
 
+    /**
+     * пример запроса Native
+     */
     public MobilePhone getPhoneByIdNative(long id) {
         Session session = factory.openSession();
         session.beginTransaction();
@@ -40,6 +43,9 @@ public class MobilePhoneDao {
         return phone;
     }
 
+    /**
+     * пример запроса Hql
+     */
     public MobilePhone getPhoneByIdHql(long id) {
         return getFromDB(session -> {
             Query query = session.createQuery("FROM MobilePhone where id=:id");
@@ -48,6 +54,9 @@ public class MobilePhoneDao {
         });
     }
 
+    /**
+     * пример запроса Criteria
+     */
     public MobilePhone getPhoneByIdCriteria(long id) {
         return getFromDB(session -> {
             Criteria criteria = session.createCriteria((MobilePhone.class));
