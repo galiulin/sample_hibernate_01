@@ -11,12 +11,12 @@ import org.springframework.web.servlet.ModelAndView;
 public class GetPhoneController {
 
     @Autowired
-    private db.dao.MobilePhoneDaoEm mobilePhoneDaoEm;
+    private db.dao.MobilePhoneDao mobilePhoneDao;
 
     @RequestMapping(value = "/getPhone", method = RequestMethod.GET)
     public ModelAndView getPhone(){
         ModelAndView modelAndView = new ModelAndView("data");
-        MobilePhone phone = mobilePhoneDaoEm.getPhoneById(154);
+        MobilePhone phone = mobilePhoneDao.getPhoneByIdNative(154);
         System.out.println(phone);
         modelAndView.addObject("phone", phone);
         return modelAndView;

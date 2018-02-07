@@ -1,22 +1,25 @@
 package db.dao;
 
 import db.entities.MobilePhone;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
-import org.hibernate.query.NativeQuery;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
+import java.math.BigInteger;
 import java.util.function.Function;
 
 @Repository
 public class MobilePhoneDao {
 
     @Autowired
-    private SessionFactory factory;
+    @Qualifier("entityManagerFactory")
+    private EntityManagerFactory emf;
 
     /**
      * Получение {@link MobilePhone} по его id
@@ -24,22 +27,29 @@ public class MobilePhoneDao {
      * @return MobilePhone
      */
     public MobilePhone getPhoneById(long id) {
-        return getFromDB(session ->
-                session.get(MobilePhone.class, id));
+        return getFromDB(entityManager ->
+                entityManager.find(MobilePhone.class, id));
     }
 
     /**
      * пример запроса Native
      */
     public MobilePhone getPhoneByIdNative(long id) {
-        Session session = factory.openSession();
-        session.beginTransaction();
-        NativeQuery query = session.createNativeQuery(
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        Query nativeQuery = em.createNativeQuery(
                 "SELECT * FROM mobile WHERE mobile.id=" +
                         id);
-        query.addEntity(MobilePhone.class);
-        MobilePhone phone = (MobilePhone) query.list().get(0);
-        session.close();
+        Object[] o = (Object[]) nativeQuery.getResultList().get(0);
+        MobilePhone phone = new MobilePhone();
+        phone.setId(id);
+        BigInteger bi = (BigInteger) o[1];
+        phone.setCost(bi.longValue());
+//        phone.setDeveloper((String) o[2]);
+        phone.setModel((String) o[3]);
+        phone.setRecense((String) o[4]);
+        /*fixme в настоящий момент не выставляется certificate и manufacturer*/
+        em.close();
         return phone;
     }
 
@@ -48,6 +58,7 @@ public class MobilePhoneDao {
      */
     public MobilePhone getPhoneByIdHql(long id) {
         return getFromDB(session -> {
+            System.out.println("user hql");
             Query query = session.createQuery("FROM MobilePhone where id=:id");
             query.setParameter("id", id);
             return (MobilePhone) query.getResultList().get(0);
@@ -58,10 +69,12 @@ public class MobilePhoneDao {
      * пример запроса Criteria
      */
     public MobilePhone getPhoneByIdCriteria(long id) {
-        return getFromDB(session -> {
-            Criteria criteria = session.createCriteria((MobilePhone.class));
-            criteria.add(Restrictions.eq("id", id));
-            return (MobilePhone) criteria.list().get(0);
+        return getFromDB(entityManager -> {
+            CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+            CriteriaQuery<MobilePhone> query = criteriaBuilder.createQuery(MobilePhone.class);
+            Root<MobilePhone> from = query.from(MobilePhone.class);
+            query.where(criteriaBuilder.equal(from.get("id"), id));
+            return (MobilePhone) entityManager.createQuery(query).getSingleResult();
         });
     }
 
@@ -69,8 +82,8 @@ public class MobilePhoneDao {
      * Добавление в базу данных {@link MobilePhone}
      */
     public void addPhone(MobilePhone phone) {
-        getFromDB(session -> {
-            session.save(phone);
+        getFromDB(entityManager -> {
+            entityManager.persist(phone);
             return true;
         });
     }
@@ -79,8 +92,8 @@ public class MobilePhoneDao {
      * Обновление в базе данных {@link MobilePhone}
      */
     public void updatePhone(MobilePhone phone) {
-        getFromDB(session -> {
-            session.update(phone);
+        getFromDB(entityManager -> {
+            entityManager.merge(phone);
             return true;
         });
     }
@@ -94,10 +107,10 @@ public class MobilePhoneDao {
      * false если телефона в базе данных не было
      */
     public boolean deletePhoneById(long id) {
-        return getFromDB(session -> {
-            MobilePhone m = session.get(MobilePhone.class, id);
+        return getFromDB(entityManager -> {
+            MobilePhone m = entityManager.find(MobilePhone.class, id);
             if (m != null) {
-                session.delete(m);
+                entityManager.remove(m);
                 return true;
             }
             return false;
@@ -106,16 +119,16 @@ public class MobilePhoneDao {
     }
 
     /**
-     * вспомогательный метод для работы с {@link Session}
+     * вспомогательный метод для работы с {@link EntityManager}
      * используя {@link Function}
      */
-    private <T> T getFromDB(Function<Session, T> function) {
+    private <T> T getFromDB(Function<EntityManager, T> function) {
         T result;
-        try (Session session = factory.openSession()) {
-            session.beginTransaction();
-            result = function.apply(session);
-            session.getTransaction().commit();
-        }
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+        result = function.apply(em);
+        em.getTransaction().commit();
+        em.close();
         return result;
     }
 }
