@@ -20,5 +20,8 @@
 <a href="./updatePhone">Update</a>
 <br/>
 <a href="./deletePhone">Delete</a>
+
+<br/>
+<a href="./showJpa">Show JPA</a>
 </body>
 </html>
